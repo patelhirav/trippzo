@@ -26,7 +26,7 @@ module.exports = {
         } catch (err) {
             res.status(500).json({ error: err.message });
         }
-    },
+    },   
 
     async login(req, res) {
         try {
@@ -34,7 +34,7 @@ module.exports = {
 
             const user = await prisma.user.findFirst({
                 where: { OR: [{ email }, { mobileNo }] },
-            });
+            });   
 
             if (!user) {
                 return res.status(400).json({ message: "User not found" });

@@ -21,3 +21,11 @@ model User {
   password  String
   createdAt DateTime @default(now())
 }
+
+model OTP {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  email      String
+  otp        String
+  expire_at  DateTime
+  created_at DateTime @default(now())
+}
