@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,18 +8,104 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
-  email     String   @unique
-  mobileNo  String   @unique
-  password  String
-  createdAt DateTime @default(now())
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  name       String
+  email      String   @unique
+  password   String
+  isVerified Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  trips        Trip[]         @relation("CreatedTrips") // User created trips
+  members      TripMember[]
+  messages     ChatMessage[]
+  Expense      Expense[]
+  ExpenseSplit ExpenseSplit[]
+
+  balancesAsPayer    Balance[] @relation("Payer")
+  balancesAsReceiver Balance[] @relation("Receiver")
 }
 
-model OTP {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  email      String
-  otp        String
-  expire_at  DateTime
-  created_at DateTime @default(now())
+model Trip {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  destination String
+  startDate   DateTime
+  endDate     DateTime
+  budget      Float
+  createdAt   DateTime @default(now())
+  createdBy   String   @db.ObjectId
+  creator     User     @relation("CreatedTrips", fields: [createdBy], references: [id])
+
+  members  TripMember[]
+  expenses Expense[]
+  messages ChatMessage[]
+  Balance  Balance[]
+}
+
+model TripMember {
+  id       String    @id @default(auto()) @map("_id") @db.ObjectId
+  tripId   String    @db.ObjectId
+  userId   String?   @db.ObjectId
+  name     String
+  email    String
+  invited  Boolean   @default(true)
+  joined   Boolean   @default(false)
+  joinedAt DateTime?
+
+  trip Trip  @relation(fields: [tripId], references: [id])
+  user User? @relation(fields: [userId], references: [id])
+}
+
+model Expense {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  tripId    String   @db.ObjectId
+  addedBy   String   @db.ObjectId
+  title     String
+  amount    Float
+  date      DateTime @default(now())
+  category  String
+  location  String?
+  photoUrl  String?
+  splitType String // "equal", "custom"
+
+  trip        Trip           @relation(fields: [tripId], references: [id])
+  addedByUser User           @relation(fields: [addedBy], references: [id])
+  splits      ExpenseSplit[]
+}
+
+model ExpenseSplit {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  expenseId String  @db.ObjectId
+  userId    String  @db.ObjectId
+  amount    Float
+  paid      Boolean @default(false)
+
+  expense Expense @relation(fields: [expenseId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
+}
+
+model Balance {
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  tripId     String    @db.ObjectId
+  payerId    String    @db.ObjectId
+  receiverId String    @db.ObjectId
+  amount     Float
+  settled    Boolean   @default(false)
+  settledAt  DateTime?
+
+  trip     Trip @relation(fields: [tripId], references: [id])
+  payer    User @relation("Payer", fields: [payerId], references: [id])
+  receiver User @relation("Receiver", fields: [receiverId], references: [id])
+}
+
+model ChatMessage {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  tripId    String   @db.ObjectId
+  senderId  String   @db.ObjectId
+  message   String
+  type      String // "text", "image", "audio"
+  createdAt DateTime @default(now())
+
+  trip   Trip @relation(fields: [tripId], references: [id])
+  sender User @relation(fields: [senderId], references: [id])
 }
