@@ -2,8 +2,11 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 
+
 const authRoutes = require("./routes/authRoutes");
 const otpRoutes = require("./routes/otpRoutes");
+const tripRoutes = require("./routes/triRoutes"); 
+
 
 const app = express();
 
@@ -19,50 +22,34 @@ app.use(express.json());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/otp", otpRoutes);
+app.use("/api/trips", tripRoutes); 
 
 app.get("/", (req, res) => {
   res.send(`
     <h1>Trippzo API</h1>
-    <p>This is a backend service for OTP authentication.</p>
-    <p>Check <a href="/api-docs">API Documentation</a> for available endpoints.</p>
+    <p>This is a backend service for OTP authentication and trip planning.</p>
+    
+    <h3>Auth Routes</h3>
+    <ul>
+      <li>Signup - <a href="https://trippzo.onrender.com/api/auth/signup">/api/auth/signup</a></li>
+      <li>Login - <a href="https://trippzo.onrender.com/api/auth/login">/api/auth/login</a></li>
+    </ul>
 
-    <h3>API Routes</h3>
-    <table border="1" cellpadding="5" cellspacing="0" style="width: 100%; text-align: left;">
-      <thead>
-        <tr>
-          <th>Route</th>
-          <th>Method</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><a href="/api/auth/signup">/api/auth/signup</a></td>
-          <td>POST</td>
-          <td>User registration endpoint.</td>
-        </tr>
-        <tr>
-          <td><a href="/api/auth/login">/api/auth/login</a></td>
-          <td>POST</td>
-          <td>User login endpoint.</td>
-        </tr>
-        <tr>
-          <td><a href="/api/otp/send-otp">/api/otp/send-otp</a></td>
-          <td>POST</td>
-          <td>Send OTP to a user for authentication.</td>
-        </tr>
-        <tr>
-          <td><a href="/api/otp/verify-otp">/api/otp/verify-otp</a></td>
-          <td>POST</td>
-          <td>Verify OTP entered by the user.</td>
-        </tr>
-        <tr>
-          <td><a href="/api/otp/reset-password">/api/otp/reset-password</a></td>
-          <td>POST</td>
-          <td>Reset password using OTP.</td>
-        </tr>
-      </tbody>
-    </table>
+    <h3>OTP Routes</h3>
+    <ul>
+      <li>Send OTP - <a href="https://trippzo.onrender.com/api/otp/send-otp">/api/otp/send-otp</a></li>
+      <li>Verify OTP - <a href="https://trippzo.onrender.com/api/otp/verify-otp">/api/otp/verify-otp</a></li>
+      <li>Reset Password - <a href="https://trippzo.onrender.com/api/otp/reset-password">/api/otp/reset-password</a></li>
+    </ul>
+
+    <h3>Trip Routes</h3>
+    <ul>
+      <li>Create Trip - <code>POST /api/trips/create</code></li>
+      <li>Add Members to Trip - <code>POST /api/trips/add-members</code></li>
+      <li>Get Trip Details - <code>GET /api/trips/:tripId</code></li>
+    </ul>
+
+    <p>Check <a href="/api-docs">API Documentation</a> for full specs.</p>
   `);
 });
 
