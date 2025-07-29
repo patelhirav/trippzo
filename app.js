@@ -24,32 +24,41 @@ app.use("/api/auth", authRoutes);
 app.use("/api/otp", otpRoutes);
 app.use("/api/trips", tripRoutes); 
 
+const express = require("express");
+const cors = require("cors");
+require("dotenv").config();
+
 app.get("/", (req, res) => {
   res.send(`
     <h1>Trippzo API</h1>
-    <p>This is a backend service for OTP authentication and trip planning.</p>
-    
-    <h3>Auth Routes</h3>
+    <p>This is the backend service for trip planning, group expenses, and OTP-based authentication.</p>
+    <h1>Base URL: https://trippzo.onrender.com </h1>
+    <h2>Auth Routes</h2>
     <ul>
-      <li>Signup - <a href="https://trippzo.onrender.com/api/auth/signup">/api/auth/signup</a></li>
-      <li>Login - <a href="https://trippzo.onrender.com/api/auth/login">/api/auth/login</a></li>
+      <li><code>POST /api/auth/signup</code> – Register a new user</li>
+      <li><code>POST /api/auth/login</code> – Login with email or mobile</li>
     </ul>
 
-    <h3>OTP Routes</h3>
+    <h2>OTP Routes</h2>
     <ul>
-      <li>Send OTP - <a href="https://trippzo.onrender.com/api/otp/send-otp">/api/otp/send-otp</a></li>
-      <li>Verify OTP - <a href="https://trippzo.onrender.com/api/otp/verify-otp">/api/otp/verify-otp</a></li>
-      <li>Reset Password - <a href="https://trippzo.onrender.com/api/otp/reset-password">/api/otp/reset-password</a></li>
+      <li><code>POST /api/otp/send-otp</code> – Send OTP to email</li>
+      <li><code>POST /api/otp/verify-otp</code> – Verify OTP</li>
+      <li><code>POST /api/otp/reset-password</code> – Reset password with verified OTP</li>
     </ul>
 
-    <h3>Trip Routes</h3>
+    <h2>Trip Routes</h2>
     <ul>
-      <li>Create Trip - <code>POST /api/trips/create</code></li>
-      <li>Add Members to Trip - <code>POST /api/trips/add-members</code></li>
-      <li>Get Trip Details - <code>GET /api/trips/:tripId</code></li>
+      <li><code>POST /api/trips/create</code> – Create a new trip with members</li>
+      <li><code>POST /api/trips/add-members</code> – Add members to an existing trip</li>
+      <li><code>GET /api/trips/:tripId</code> – Get trip details including members</li>
     </ul>
 
-    <p>Check <a href="/api-docs">API Documentation</a> for full specs.</p>
+    <h2>Expense Routes</h2>
+    <ul>
+      <li><code>POST /api/expenses/add</code> – Add an expense and split it among users</li>
+      <li><code>GET /api/expenses/:tripId</code> – Get all expenses in a trip</li>
+      <li><code>GET /api/expenses/balance/:tripId</code> – Get balance summary (who owes whom)</li>
+    </ul>
   `);
 });
 
