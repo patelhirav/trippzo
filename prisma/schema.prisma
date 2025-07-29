@@ -49,3 +49,26 @@ model OTP {
   expire_at  DateTime
   created_at DateTime @default(now())
 }
+
+model Expense {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  tripId    String   @db.ObjectId
+  paidBy    String   @db.ObjectId
+  amount    Float
+  category  String
+  note      String?
+  date      DateTime @default(now())
+  location  String?
+  photoUrl  String?
+  createdAt DateTime @default(now())
+
+  shares ExpenseShare[]
+}
+
+model ExpenseShare {
+  id         String  @id @default(auto()) @map("_id") @db.ObjectId
+  expenseId  String  @db.ObjectId
+  userId     String  @db.ObjectId
+  owedAmount Float
+  Expense    Expense @relation(fields: [expenseId], references: [id])
+}
