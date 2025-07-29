@@ -2,14 +2,15 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 
-
 const authRoutes = require("./routes/authRoutes");
 const otpRoutes = require("./routes/otpRoutes");
 const tripRoutes = require("./routes/triRoutes"); 
+const expenseRoutes = require("./routes/expenseRoutes");
+
 
 
 const app = express();
-
+app.use(express.json());
 // CORS Configuration (Optional)
 const corsOptions = {
   origin: "*", // This allows requests from any origin, you can restrict this as needed.
@@ -18,15 +19,11 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-app.use(express.json());
-
 app.use("/api/auth", authRoutes);
 app.use("/api/otp", otpRoutes);
 app.use("/api/trips", tripRoutes); 
+app.use("/api/expenses", expenseRoutes);
 
-const express = require("express");
-const cors = require("cors");
-require("dotenv").config();
 
 app.get("/", (req, res) => {
   res.send(`
